@@ -12,39 +12,6 @@ h2. Current Features
 
 h2. Instructions
 
-# Create the db tables
-# Generate the code
-# Add these to your routes file
-<pre>
-<code>
-<cfset addRoute(name="login", pattern="login", controller="sessions", action="new")>  
-<cfset addRoute(name="logout", pattern="logout", controller="sessions", action="destroy")>
-<cfset addRoute(name="signup", pattern="signup", controller="users", action="new")>
-<cfset addRoute(name="activate", pattern="activation/[activationCode]", controller="activations", action="activate")>
-</code>
-</pre>
-# Filters can be added to controllers, etc.
-# Create users table with the following SQL
-
-<pre>
-CREATE TABLE `users` (
-  `id` int(11) NOT NULL auto_increment,
-  `accountID` int(11) default NULL,
-  `username` varchar(20) collate latin1_general_ci NOT NULL default '',
-  `password` varchar(255) collate latin1_general_ci NOT NULL default '',
-  `email` varchar(100) collate latin1_general_ci NOT NULL default '',
-  `firstName` varchar(50) collate latin1_general_ci NOT NULL default '',
-  `lastName` varchar(50) collate latin1_general_ci default NULL,
-  `isAdmin` tinyint(1) default '0',
-  `activationCode` varchar(35) collate latin1_general_ci default NULL,
-  `activatedAt` datetime default NULL,
-  `lastLogin` int(11) default NULL,
-  `createdAt` datetime default NULL,
-  `updatedAt` datetime default NULL,
-  PRIMARY KEY  (`id`)
-) 
-</pre>
-
-TODO
-
-* Move password encryption to plugin file
+# First, install the dbmigrate plugin: (http://cfwheels.org/plugins/listing/28)
+# Generate the code by browsing to your CFWheels site, and clicking on the Keyless Entry plugin in the information bar at the bottom
+# Follow the instructions on the screen.
