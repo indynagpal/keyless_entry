@@ -3,7 +3,7 @@
 	<!--- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: --->
 
   <cffunction name="init">
-    <cfset this.version = "0.9.3">
+    <cfset this.version = "1.1,1.1.2">
     <cfreturn this>
   </cffunction>
 
