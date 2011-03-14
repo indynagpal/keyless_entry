@@ -1,6 +1,6 @@
 <table class="table">
   <tr>
-		<th>Id</th>
+		<th>ID</th>
 		<th>Login</th>
 		<th>Email</th>
 		<th>Actions</th>
@@ -8,13 +8,13 @@
   <cfoutput query="users">
   	<tr>
 		<td>
-			#id#
+			#users.id#
 		</td>
 		<td>
-			#login#
+			#users.username#
 		</td>
 		<td>
-			#email#
+			#users.email#
 		</td>
 		<td>
 			#linkTo(text='Show', action='show', key=id)# | 
@@ -24,4 +24,3 @@
 	  </tr>
   </cfoutput>
 </table>
-

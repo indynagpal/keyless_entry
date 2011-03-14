@@ -2,14 +2,14 @@
 
 	#errorMessagesFor("user")#
 
-	#startFormTag(action="update", class="form")#
+	#startFormTag(action="update", key=params.key)#
 		
 		<div class="group">
 			#hiddenField(objectName='user', property='id')#
 		</div>	
 		
 		<div>
-			#textField(objectName='user', property='login', label='Username <em>*</em>')#
+			#textField(objectName='user', property='username', label='Username <em>*</em>')#
 		</div>	
 
 		<div>
@@ -17,13 +17,6 @@
 		</div>	
 		
 		<div>
-			<cfloop query="roles">
-				<input type="checkbox" name="user[assignedRoles]" id="user-assigned-roles" value="#roles.name#" <cfif listfind("#user.assignedRoles#", "#roles.name#")>checked</cfif>> #roles.name#<br/>
-			</cfloop>
-		</div>		
-
-		<div class="clear"></div>
-		<div class="group navform">
 			#submitTag()#
 		</div>
 		

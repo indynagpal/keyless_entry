@@ -12,10 +12,10 @@
   <li>Uses email validation prior to activation via email.</li>
 </ul>
 
-<cfif structKeyExists(URL, 'generateCode')>
+<cfif structKeyExists(form, 'btnSubmit')>
   
   <h2>Creating Files...</h2>
-  
+
   <cfoutput>
   	<p><tt>#generateAuthCode()#</tt></p>
   </cfoutput>
@@ -41,28 +41,18 @@
       &lt;cfset set(functionName="sendEmail", server="", username="", password="")&gt;
     </tt>
   </p>
+
+  <p>
+    Open the events/onrequeststart.cfm and add the following line. This configures the 'To' email address from which the email is sent.<br/>
+    <tt>
+      &lt;cfset request.signup_from_email_address = "you@domain.com"&gt;
+    </tt>
+  </p>
   
   <p>
-    Then, login to your database and create the appropriate tables using the code below:
-    
-    <h3>MySQL</h3>
-    <tt>
-      CREATE TABLE `users` (<br/>
-      `id` int(11) NOT NULL auto_increment,<br/>
-      `username` varchar(20) character set latin1 collate latin1_general_ci NOT NULL default '',<br/>
-      `password` varchar(255) character set latin1 collate latin1_general_ci NOT NULL default '',<br/>
-      `email` varchar(100) character set latin1 collate latin1_general_ci NOT NULL default '',<br/>
-      `firstName` varchar(50) character set latin1 collate latin1_general_ci NOT NULL default '',<br/>
-      `lastName` varchar(50) character set latin1 collate latin1_general_ci default NULL,<br/>
-      `isAdmin` tinyint(1) default '0',<br/>
-      `lastLogin` datetime default NULL,<br/>
-      `activationCode` varchar(35) default NULL,<br/>
-      `activatedAt` datetime default NULL,<br/>
-      `createdAt` datetime default NULL,<br/>
-      `updatedAt` datetime default NULL,<br/>
-      PRIMARY KEY  (`id`)<br/>
-      ) ENGINE=MyISAM AUTO_INCREMENT=14 DEFAULT CHARSET=latin1
-    </tt>
+    Make sure you have the db-migrate plugin installed (http://cfwheels.org/plugins/listing/28).<br/><br/>
+
+    And run the migration: 20110315091458_Create_Users_Table.cfc
   </p>
   
   <p>
@@ -74,10 +64,8 @@
   <h2>Generate Code</h2>
   
   <!--- Form --->
-  <cfform action="#CGI.script_name & '?' & CGI.query_string#">
+  <cfform action="#CGI.script_name & '?' & CGI.query_string#" method="post">
     
-    <input type="hidden" name="generateCode" value="true">
-	
   	<p><cfinput type="submit" name="btnSubmit" value="Generate"></p>
 	
   </cfform>

@@ -1,16 +1,22 @@
 <cfcomponent output="false">
 
+	<!--- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: --->
+
   <cffunction name="init">
     <cfset this.version = "0.9.3">
     <cfreturn this>
   </cffunction>
-  
+
+	<!--- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: --->
+
   <cffunction name="loginRequired">
 		<cfif Not structKeyExists(session,"currentUser")>
 			<cfset flashInsert(error="You do not have permissions to do that!")>
 			<cfset redirectTo(controller="sessions", action="new")>
 		</cfif>
 	</cffunction>
+
+	<!--- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: --->
 	
 	<cffunction name="loginProhibited">
 		<cfif structKeyExists(session,"currentUser")>
@@ -18,6 +24,8 @@
 			<cfset redirectTo(route="home")>
 		</cfif>
 	</cffunction>
+
+	<!--- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: --->
 	
 	<cffunction name="isLoggedIn">
     <cfif structKeyExists(session, "currentUser")>
@@ -26,6 +34,8 @@
       <cfreturn false>
     </cfif>
   </cffunction>
+
+	<!--- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: --->
   
   <cffunction name="isAdmin">
     <cfif structKeyExists(session, "currentUser") and NOT session.currentUser.isAdmin>
@@ -33,6 +43,8 @@
   		<cfset redirectTo(route="home")>
     </cfif>
   </cffunction>
+
+	<!--- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: --->
 	
 	<!---
 	 TODO Might look to add a function for checking if the user is the current user
@@ -51,7 +63,7 @@
 		  
 		<!--- Setup the information for the user --->
 		<cfset loc.message = "">
-		  
+		
 		<!--- Create the model --->
 		<cfset loc.message = loc.message & $generateModelFile('user') & "<br/>">
 		<!--- Create the controllers --->
@@ -60,18 +72,27 @@
 		<cfset loc.message = loc.message & $generateControllerFile('activation') & "<br/>">
 		<!--- Create the view folders--->
 		<cfset loc.message = loc.message & $generateViewFolders('user') & "<br/>">
+		 
+		<!--- Create db migrate --->
+		<cfset loc.message = loc.message & $generateDBFolders('migrate') & "<br/>">
+		<cfset loc.message = loc.message & $generateDBFile('20110315091458_Create_Users_Table.cfc') & "<br/>">
+		
 		
 	  <!--- Create the view files --->
 	  <cfset loc.message = loc.message & $generateViewFile('index','user') & "<br/>">
 	  <cfset loc.message = loc.message & $generateViewFile('new','user') & "<br/>">
 	  <cfset loc.message = loc.message & $generateViewFile('edit','user') & "<br/>">
 	  <cfset loc.message = loc.message & $generateViewFile('show','user') & "<br/>">
+	  <cfset loc.message = loc.message & $generateViewFile('email_template_new_user_activation','user') & "<br/>">
 	  
 	  <cfset loc.message = loc.message & $generateViewFolders('session') & "<br/>">
 	  <cfset loc.message = loc.message & $generateViewFile('new','session') & "<br/>">
+	   
 	 
 	 <cfreturn loc.message>
 	</cffunction>
+
+	<!--- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: --->
 	
 	
 	<cffunction name="$generateModelFile" access="public" returnType="string" output="false">
@@ -89,6 +110,8 @@
 		
 		<cfreturn loc.message>
 	</cffunction>
+
+	<!--- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: --->
 	
 	<cffunction name="$generateViewFile" access="public" returnType="string" output="false">
 		<cfargument name="name" type="string" required="true" hint="Name of the file">
@@ -107,6 +130,7 @@
 		<cfreturn loc.message>
 	</cffunction>
 	
+	<!--- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: --->
 	
 	<cffunction name="$generateViewFolders" access="public" returnType="string" output="false">
 	  <cfargument name="name" type="string" required="true">
@@ -124,7 +148,39 @@
 		<cfreturn loc.message>
 	</cffunction>
 	
+	<!--- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: --->
 	
+	<cffunction name="$generateDBFolders" access="public" returnType="string" output="false">
+	  <cfargument name="name" type="string" required="true">
+	    
+		<cfset var loc = {}>
+		
+		<cfset $moveFilesToFolder(arguments.name, "DB")>
+		<cfset loc.message = "Folder 'db/migrate/#arguments.name#/' created.">		
+	  
+		<cfreturn loc.message>
+	</cffunction>
+
+	<!--- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: --->
+
+	<cffunction name="$generateDBFile" access="public" returnType="string" output="false">
+		<cfargument name="name" type="string" required="true" hint="Name of the file">
+		
+		<cfset var loc = {}>
+		
+		<!--- Check that the file has not been already created --->
+		<cfif $checkIfExists(arguments.name, "DBFile")>
+		    <cfset loc.message = "File 'db/migrate/#arguments.name#' already exists so skipped.">
+		<cfelse>
+			<cfset $moveFilesToFolder(arguments.name, "DBFile")>
+		    <cfset loc.message = "File 'db/migrate/#arguments.name#' created.">
+		</cfif>
+		
+		<cfreturn loc.message>
+	</cffunction>
+	
+	<!--- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: --->
+
 	<cffunction name="$generateControllerFile" access="public" returnType="string" output="false">
 		<cfargument name="name" type="string" required="true" hint="Name of the object">
 		
@@ -141,6 +197,7 @@
 		<cfreturn loc.message>
 	</cffunction>
 	
+	<!--- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: --->
 	
 	<cffunction name="$checkIfExists" access="public" returntype="boolean" hint="Checks if the desired object is already created" output="false">
 		<cfargument name="name" type="string" required="true" hint="Name of the file to search for">
@@ -160,8 +217,14 @@
 	        --->
 	    		<cfset loc.targetFolderPath = expandPath("views/" & LCase(pluralize(arguments.name)))>
 	      </cfcase>
+	      <cfcase value="DB">
+	      		<cfset loc.targetFolderPath = expandPath("db/migrate")>
+	      </cfcase>
 	      <cfcase value="ViewFile">
 	        <cfset loc.targetFolderPath = expandPath("views/" & LCase(pluralize(arguments.modelName)))>
+	      </cfcase>
+	      <cfcase value="DBFile">
+	        <cfset loc.targetFolderPath = expandPath("db/migrate" & arguments.name)>
 	      </cfcase>
 	      <cfcase value="Controller">
 	      	<cfset loc.targetFolderPath = expandPath("controllers/")>
@@ -180,7 +243,8 @@
 	    
 	    <cfreturn loc.wasFound>
 	</cffunction>
-	
+
+	<!--- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: --->
 	
 	<cffunction name="$moveFilesToFolder" access="public" returntype="void" output="false">
 		<cfargument name="name" type="string" required="true" hint="Name to set the file when moved">
@@ -216,6 +280,19 @@
         </cfif>
       </cfcase>
       
+      <cfcase value="DB">
+        	
+        <!--- Expand the from and destination folders --->
+		<cfset loc.fromFolderPath = expandPath("plugins/keylessentry/templates/db/" & arguments.name)>
+    	<cfset loc.destinationFolderPath = expandPath("db/" & arguments.name)>
+            
+        <!--- Create the directory to store the views in --->
+        <cfif NOT DirectoryExists(loc.destinationFolderPath)>
+        	<cfdirectory action="create" directory="#loc.destinationFolderPath#">
+        </cfif>
+
+      </cfcase>
+
       <cfcase value="viewFile">
         <!--- Expand the from and destination folders --->
     		<cfset loc.fromFolderPath = expandPath("plugins/keylessentry/templates/views/" & LCase(pluralize(arguments.modelName)))>
@@ -226,6 +303,15 @@
         <cffile action="write" file="#loc.destinationFolderPath#/#lCase(arguments.name)#.cfm" output="#loc.file#" mode="644"> 
       </cfcase>
 	        
+      <cfcase value="DBFile">
+        <!--- Expand the from and destination folders --->
+    	<cfset loc.fromFolderPath = expandPath("plugins/keylessentry/templates/db/migrate/" & arguments.name)>
+        <cfset loc.destinationFolderPath = expandPath("db/migrate/" & arguments.name)>
+          
+        <cffile action="read" file="#loc.fromFolderPath#" variable="loc.file">
+          
+        <cffile action="write" file="#loc.destinationFolderPath#" output="#loc.file#" mode="644"> 
+      </cfcase>
 	        
       <cfcase value="Controller">
         
@@ -247,7 +333,8 @@
     </cfswitch>
 	    
 	</cffunction>
-	
+
+	<!--- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: --->
 	
 	<cffunction name="$checkDevEnv" access="public" returnType="void" hint="Checks that the enviroment is either 'design' or 'development'" output="false">
 	
@@ -259,5 +346,7 @@
 		</cfif>
 	
 	</cffunction>
+
+	<!--- :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: --->
 
 </cfcomponent>
